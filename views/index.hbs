@@ -1,0 +1,75 @@
+<header>
+    <h1 class="animate__animated animate__bounce">🚨 Chatiina 🙊</h1>
+    <h2 id="clientesConect">Clientes conectados: </h2>
+</header>
+<main>
+    <ul id="mensajes">
+        <li>Dani: Hola que hase</li>
+
+    </ul>
+</main>
+<footer>
+    <div>
+        <label>Nombre</label>
+        <input id="inputNombre" type="text">
+    </div>
+    <div>
+        <label> Mensaje</label>
+        <input id="inputMensaje" type="text">
+    </div>
+    <button id="btnEnviar"> Enviar</button>
+</footer>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    //codigo js lado cliente
+
+    //conectamos el servidor
+    const socket = io();
+
+    //cuando haga click en el boton mostrar console log con un obj que tenga esta pinta:
+    /**
+     {
+        nombre: valor del input nombre
+        mensaje: valor del imput mensje
+     }
+
+     document.getElementById
+     BOTON.addEventListtener
+     */
+    const inputNombre = document.getElementById('inputNombre');
+    const inputMensaje = document.getElementById('inputMensaje');
+
+    const btnEnviar = document.getElementById('btnEnviar');
+    const mensajes = document.getElementById('mensajes');
+    const clientesConect = document.getElementById('clientesConect');
+    btnEnviar.addEventListener('click', () => {
+        const data = {
+            Nombre: inputNombre.value,
+            Mensaje: inputMensaje.value
+        }
+        socket.emit('mensaje_chat', data);
+    });
+
+    socket.on('mensaje_chat', (data) => {
+        console.log(data);
+        // generar un li con los datos de nombre y mensaje
+        //agregar ese li al ul de mensajes
+        //createElement y append
+        const li = document.createElement('Li');
+        li.innerText = `${data.Nombre}: ${data.Mensaje}`;
+        mensajes.append(li);
+        var objDiv = document.getElementById("main");
+        objDiv.scrollTop = objDiv.scrollHeight;
+    });
+
+    socket.on('clientes_chat', (data) => {
+        //data es el numero de clientes conectados
+        //modificar h2 paraq ue asparezcan clientes conectados
+        clientesConect.innerText = `Clientes en la sala : ${data}`
+    });
+
+
+
+</script>
